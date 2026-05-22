@@ -2,24 +2,45 @@
     // A simple flag to ensure we only bind the global event listener once per frame
     let enterKeyScriptInitialized = false;
 
-    // YOUR ORIGINAL CODE - Wrapped neatly to receive the menu state
+    // YOUR IMPROVED CODE - Built to dynamically fetch buttons on keydown
     function runEnterKeyScript(isActive) {
         // If the toggle is clicked "ON" and we haven't set up the listener yet, bind it
         if (isActive && !enterKeyScriptInitialized) {
             enterKeyScriptInitialized = true;
 
-            // --- EXACTLY YOUR ORIGINAL CODE BLOCK START ---
-            function clickAllButtons() {
-                const container = document.querySelector('#screen > div.tab-buttons.small-tab-buttons'); 
+            function clickNextButton() {
+                // 1. Try your original container layout first
+                let container = document.querySelector('#screen > div.tab-buttons.small-tab-buttons');
+                let buttons = container ? container.querySelectorAll('button') : [];
                 
-                if (!container) {
-                    console.log("Container div not found. Double check the page structure.");
+                // 2. Fallback: If container isn't found, find any tab-buttons layout on the page
+                if (buttons.length === 0) {
+                    buttons = document.querySelectorAll('.tab-buttons button, .small-tab-buttons button');
+                }
+
+                if (buttons.length === 0) {
+                    console.log("No navigation buttons found on this page state yet.");
                     return;
                 }
 
-                const buttons = container.querySelectorAll('button');
-                
-                buttons.forEach(button => button.click());
+                // Smart Filter: Look for common "proceed" text to avoid accidentally clicking "Back"
+                let targetButton = null;
+                for (let btn of buttons) {
+                    const text = btn.innerText.toLowerCase().trim();
+                    if (text.includes('next') || text.includes('done') || text.includes('continue') || text.includes('submit')) {
+                        targetButton = btn;
+                        break;
+                    }
+                }
+
+                // Default fallback: If no text matches perfectly, click the last button (usually 'Next' on the right side)
+                if (!targetButton) {
+                    targetButton = buttons[buttons.length - 1];
+                }
+
+                if (targetButton) {
+                    targetButton.click();
+                }
             }
 
             window.addEventListener('keydown', (event) => {
@@ -28,11 +49,15 @@
                 if (!isCurrentlyEnabled) return;
 
                 if (event.key === 'Enter' || event.code === 'Enter') {
+                    // Check if user is typing in a textarea or input box so we don't disrupt typing
+                    if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+                        return; 
+                    }
+
                     event.preventDefault(); 
-                    clickAllButtons();
+                    clickNextButton();
                 }
             });
-            // --- EXACTLY YOUR ORIGINAL CODE BLOCK END ---
             
             console.log("Enter key script successfully registered in this frame.");
         }
