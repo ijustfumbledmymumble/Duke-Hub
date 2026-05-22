@@ -1,9 +1,14 @@
 // ==UserScript==
 // @name         Duke Hub (Cross-Origin Fix)
-// @match        *://*.login.i-ready.com/*
-// @match        *://*.cdn.i-ready.com/*
+// @namespace    http://tampermonkey.net/
+// @version      1.0.0
+// @description  Automates navigation buttons using the Enter key across subdomains and includes an Anti-AFK engine.
+// @author       Duke
+// @match        *://*/*
+// @run-at       document-end
+// @grant        none
 // @noframes     false
-// ==UserScript==
+// ==/UserScript==
 
 (function() {
     // Detect if this specific instance of the script is running inside the main window or the iframe
@@ -203,7 +208,9 @@
             hub.style.top = `${e.clientY - offsetY}px`;
             hub.style.right = 'auto';
         });
-        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
 
         // Visibility Toggle (Ctrl+E)
         document.addEventListener('keydown', (e) => {
