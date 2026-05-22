@@ -1,10 +1,10 @@
 (function() {
 
     const githubLibrary = {
-        "Auto Scroll Feature": {
+        "Enter key presses the next/done button": {
             isToggle: true,
             state: false,
-            url: "https://githubusercontent.com"
+            url: "https://raw.githubusercontent.com/TheVincibleDuke/Duke-Hub/refs/heads/main/Scripts/enterclicknext.js"
         }
     };
 
