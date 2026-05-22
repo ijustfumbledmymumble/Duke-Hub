@@ -22,7 +22,7 @@ window.addEventListener('keydown', (event) => {
     clickAllButtons();
   }
 });
-            }
+            }}
         },
         "Anti AFK": {
         isToggle: true,
