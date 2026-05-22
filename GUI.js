@@ -1,7 +1,7 @@
 (function() {
     const scriptLibrary = {
 
-        "Invert Colors": {
+        "Enter Key Clicks Next/Done button": {
             isToggle: true,
             state: false,
             run: function(state) {
