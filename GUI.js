@@ -1,29 +1,32 @@
 (function() {
+    const scriptLibrary = {
 
-    const githubLibrary = {
-        "Enter key presses the next/done button": {
+        "Invert Colors": {
             isToggle: true,
             state: false,
-            url: "https://raw.githubusercontent.com/TheVincibleDuke/Duke-Hub/refs/heads/main/Scripts/enterclicknext.js"
+            run: function(state) {
+               function clickAllButtons() {
+  const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
+  
+  if (!container) {
+    console.log("Container div not found. Double check the page structure.");
+    return;
+  }
+
+  const buttons = container.querySelectorAll('button');
+  
+  buttons.forEach(button => button.click());
+}
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.code === 'Enter') {
+    event.preventDefault(); 
+    clickAllButtons();
+  }
+});
+            }
         }
     };
-
-    async function executeRemoteScript(url, isToggle, state) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            const scriptText = await response.text();
-            
-            const runScript = new Function('state', scriptText);
-            runScript(state); 
-
-              console.log(`%c Executed remote script (State passed: ${isToggle ? state : 'N/A'})`, "color: #00ff00;");
-        } catch (error) {
-            console.error(" Failed to load remote script:", error);
-            alert("Could not load script from GitHub. Check console for details.");
-        }
-    }
 
     const existingHub = document.getElementById('custom-script-hub');
     if (existingHub) existingHub.remove();
@@ -51,8 +54,8 @@
     body.style.flexDirection = 'column';
     body.style.gap = '8px';
 
-    Object.keys(githubLibrary).forEach(name => {
-        const item = githubLibrary[name];
+    Object.keys(scriptLibrary).forEach(name => {
+        const item = scriptLibrary[name];
         const btn = document.createElement('button');
         btn.innerText = name;
         
@@ -76,22 +79,25 @@
 
         btn.onmouseover = () => { 
             if (!item.isToggle || !item.state) {
-                btn.style.backgroundColor = '#00ffcc'; btn.style.color = '#1e1e24'; 
+                btn.style.backgroundColor = '#00ffcc'; 
+                btn.style.color = '#1e1e24'; 
             }
         };
         btn.onmouseout = () => { 
             if (!item.isToggle || !item.state) {
-                btn.style.backgroundColor = '#2a2a35'; btn.style.color = '#00ffcc'; 
+                btn.style.backgroundColor = '#2a2a35'; 
+                btn.style.color = '#00ffcc'; 
             }
         };
         
-        btn.addEventListener('click', async () => {
+        // Click Logic
+        btn.addEventListener('click', () => {
             if (item.isToggle) {
-                item.state = !item.state; // Invert state
+                item.state = !item.state; 
                 updateVisuals();
-                await executeRemoteScript(item.url, true, item.state);
+                item.run(item.state);     
             } else {
-                await executeRemoteScript(item.url, false, null);
+                item.run();              
             }
         });
 
@@ -122,5 +128,5 @@
         }
     });
 
-    console.log("Hub opened use ctrl+e to toggle the window");
+    console.log("Hub window opened press ctrl+e to toggle it");
 })();
