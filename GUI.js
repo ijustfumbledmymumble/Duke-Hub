@@ -21,9 +21,9 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault(); 
     clickAllButtons();
   }
-};
-            }}
-        },
+});
+            }
+        }},
         "Anti AFK": {
         isToggle: true,
         state: false,
