@@ -1,49 +1,64 @@
 (function() {
-    const scriptLibrary = {
+    // Keep track of active interval states safely outside object scopes
+    let afkTimer = null;
+    let enterKeyRegistered = false;
 
+    // Independent modular functions to ensure clean execution
+    function handleEnterKeyScript(isActive) {
+        if (!isActive) return;
+        
+        // Prevent stacking duplicate event listeners on the window object
+        if (enterKeyRegistered) return; 
+        enterKeyRegistered = true;
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.code === 'Enter') {
+                const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
+                if (container) {
+                    event.preventDefault(); 
+                    const buttons = container.querySelectorAll('button');
+                    buttons.forEach(button => button.click());
+                }
+            }
+        });
+        console.log("Enter Key script listener attached.");
+    }
+
+    function handleAntiAfkScript(isActive) {
+        if (isActive) {
+            console.log("Anti-AFK Activated");
+            // Clear any old instances before starting a new one
+            if (afkTimer) clearInterval(afkTimer); 
+            
+            afkTimer = setInterval(() => {
+                const btn = document.querySelector('#yesBtn');
+                if (btn) {
+                    btn.click();
+                }
+            }, 1000);
+        } else {
+            console.log("Anti-AFK Deactivated");
+            if (afkTimer) {
+                clearInterval(afkTimer);
+                afkTimer = null;
+            }
+        }
+    }
+
+    const scriptLibrary = {
         "Enter Key Clicks Next/Done button": {
             isToggle: true,
             state: false,
-            run: function clickAllButtons() {
-                const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
-                
-                if (!container) {
-                    console.log("Container div not found. Double check the page structure.");
-                    return;
-                }
-
-                const buttons = container.querySelectorAll('button');
-                buttons.forEach(button => button.click());
-                
-                window.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.code === 'Enter') {
-                        event.preventDefault(); 
-                        clickAllButtons();
-                    }
-                });
-            }
+            run: handleEnterKeyScript
         },
-      
         "Anti-AFK": {
             isToggle: true,
             state: false,
-            afkInterval: null, 
-            run: function(toggleState) {
-            
-                if (toggleState) {
-                    console.log("Anti-AFK Activated");
-                    this.afkInterval = setInterval(() => {
-                        const btn = document.querySelector('#yesBtn');
-                        if (btn) btn.click();
-                    }, 1000); 
-                } else {
-                    console.log("Anti-AFK Deactivated");
-                    clearInterval(this.afkInterval);
-                }
-            }
+            run: handleAntiAfkScript
         }
     };
 
+    // UI Rendering Logic (Cleaned up elements)
     const existingHub = document.getElementById('custom-script-hub');
     if (existingHub) existingHub.remove();
 
@@ -106,7 +121,6 @@
             }
         };
         
-        // Click Logic
         btn.addEventListener('click', () => {
             if (item.isToggle) {
                 item.state = !item.state; 
@@ -123,6 +137,7 @@
     hub.appendChild(body);
     document.body.appendChild(hub);
 
+    // Window Dragging Functionality
     let isDragging = false, offsetX, offsetY;
     header.addEventListener('mousedown', (e) => {
         isDragging = true;
@@ -137,6 +152,7 @@
     });
     document.addEventListener('mouseup', () => isDragging = false);
 
+    // Global Keybind Hide/Show Panel
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key.toLowerCase() === 'e') {
             e.preventDefault();
@@ -144,5 +160,5 @@
         }
     });
 
-    console.log("Hub window opened press ctrl+e to toggle it");
+    console.log("Hub window opened. Press Ctrl+E to toggle UI visibility.");
 })();
