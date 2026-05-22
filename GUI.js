@@ -18,9 +18,9 @@
             const runScript = new Function('state', scriptText);
             runScript(state); 
 
-              console.log(`%c✔ Executed remote script (State passed: ${isToggle ? state : 'N/A'})`, "color: #00ff00;");
+              console.log(`%c Executed remote script (State passed: ${isToggle ? state : 'N/A'})`, "color: #00ff00;");
         } catch (error) {
-            console.error("❌ Failed to load remote script:", error);
+            console.error(" Failed to load remote script:", error);
             alert("Could not load script from GitHub. Check console for details.");
         }
     }
