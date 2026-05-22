@@ -24,7 +24,7 @@ window.addEventListener('keydown', (event) => {
 });
             }
         }},
-        "Anti AFK": {
+         "Anti" + "AFK": {
         isToggle: true,
         state: false,
         run:  while (true) {
