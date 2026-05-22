@@ -1,4 +1,3 @@
-if (state === true) {
 function clickAllButtons() {
   const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
   
@@ -18,8 +17,3 @@ window.addEventListener('keydown', (event) => {
     clickAllButtons();
   }
 });
-
-console.log("Script active. Press Enter to click the target buttons.");
-} else {
-
-}
