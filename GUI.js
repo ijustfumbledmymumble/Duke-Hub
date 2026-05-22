@@ -86,5 +86,5 @@
         }
     });
 
-    console.log("%c⌨️ GitHub Script Hub Loaded! [ Ctrl + E ] to toggle.", "color: #00ffcc; font-weight: bold;");
+    console.log("Use ctrl+e to toggle the hub");
 })();
