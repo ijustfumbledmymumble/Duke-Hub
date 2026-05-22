@@ -4,34 +4,44 @@
         "Enter Key Clicks Next/Done button": {
             isToggle: true,
             state: false,
-            run:
-               function clickAllButtons() {
-  const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
-  
-  if (!container) {
-    console.log("Container div not found. Double check the page structure.");
-    return;
-  }
+            run: function clickAllButtons() {
+                const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
+                
+                if (!container) {
+                    console.log("Container div not found. Double check the page structure.");
+                    return;
+                }
 
-  const buttons = container.querySelectorAll('button');
-  
-  buttons.forEach(button => button.click());
-window.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' || event.code === 'Enter') {
-    event.preventDefault(); 
-    clickAllButtons();
-  }
-});
+                const buttons = container.querySelectorAll('button');
+                buttons.forEach(button => button.click());
+                
+                window.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.code === 'Enter') {
+                        event.preventDefault(); 
+                        clickAllButtons();
+                    }
+                });
             }
-        }},
-         "Anti" + "AFK": {
-        isToggle: true,
-        state: false,
-        run:  while (true) {
-  document.querySelector('#yesBtn').click();
- }
-         }
-        
+        },
+      
+        "Anti-AFK": {
+            isToggle: true,
+            state: false,
+            afkInterval: null, 
+            run: function(toggleState) {
+            
+                if (toggleState) {
+                    console.log("Anti-AFK Activated");
+                    this.afkInterval = setInterval(() => {
+                        const btn = document.querySelector('#yesBtn');
+                        if (btn) btn.click();
+                    }, 1000); 
+                } else {
+                    console.log("Anti-AFK Deactivated");
+                    clearInterval(this.afkInterval);
+                }
+            }
+        }
     };
 
     const existingHub = document.getElementById('custom-script-hub');
