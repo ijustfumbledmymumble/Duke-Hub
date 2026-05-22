@@ -1,45 +1,52 @@
 (function() {
-    // Global tracking variables for script states
-    let afkTimer = null;
+    // A simple flag to ensure we only bind the global event listener once per frame
     let enterKeyScriptInitialized = false;
 
-    function handleEnterKeyScript(isActive) {
-        // Log state changes to the console for easier debugging
-        console.log(`Enter Key Script set to: ${isActive ? "ON" : "OFF"}`);
+    // YOUR ORIGINAL CODE - Wrapped neatly to receive the menu state
+    function runEnterKeyScript(isActive) {
+        // If the toggle is clicked "ON" and we haven't set up the listener yet, bind it
+        if (isActive && !enterKeyScriptInitialized) {
+            enterKeyScriptInitialized = true;
 
-        // Initialize the listener exactly once. 
-        if (enterKeyScriptInitialized) return; 
-        enterKeyScriptInitialized = true;
-
-        window.addEventListener('keydown', (event) => {
-            // 1. First, check if the menu toggle is actually switched ON right now
-            const currentToggleState = scriptLibrary["Enter Key Clicks Next/Done button"].state;
-            if (!currentToggleState) return;
-
-            // 2. Process the Enter key event
-            if (event.key === 'Enter' || event.code === 'Enter') {
+            // --- EXACTLY YOUR ORIGINAL CODE BLOCK START ---
+            function clickAllButtons() {
                 const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
-                if (container) {
-                    event.preventDefault(); 
-                    const buttons = container.querySelectorAll('button');
-                    buttons.forEach(button => button.click());
-                    console.log("Enter key intercepted: Clicked buttons inside container.");
+                
+                if (!container) {
+                    console.log("Container div not found. Double check the page structure.");
+                    return;
                 }
+
+                const buttons = container.querySelectorAll('button');
+                
+                buttons.forEach(button => button.click());
             }
-        });
-        console.log("Global Enter Key event listener initialized successfully.");
+
+            window.addEventListener('keydown', (event) => {
+                // Read live toggle state directly from the library before executing
+                const isCurrentlyEnabled = scriptLibrary["Enter Key Clicks Next/Done button"].state;
+                if (!isCurrentlyEnabled) return;
+
+                if (event.key === 'Enter' || event.code === 'Enter') {
+                    event.preventDefault(); 
+                    clickAllButtons();
+                }
+            });
+            // --- EXACTLY YOUR ORIGINAL CODE BLOCK END ---
+            
+            console.log("Enter key script successfully registered in this frame.");
+        }
     }
 
-    function handleAntiAfkScript(isActive) {
+    // Safe Anti-AFK using an interval instead of a freezing while loop
+    let afkTimer = null;
+    function runAntiAfk(isActive) {
         if (isActive) {
             console.log("Anti-AFK Activated");
             if (afkTimer) clearInterval(afkTimer); 
-            
             afkTimer = setInterval(() => {
                 const btn = document.querySelector('#yesBtn');
-                if (btn) {
-                    btn.click();
-                }
+                if (btn) btn.click();
             }, 1000);
         } else {
             console.log("Anti-AFK Deactivated");
@@ -50,21 +57,20 @@
         }
     }
 
-    // Exposed library mapping
     const scriptLibrary = {
         "Enter Key Clicks Next/Done button": {
             isToggle: true,
             state: false,
-            run: handleEnterKeyScript
+            run: runEnterKeyScript
         },
         "Anti-AFK": {
             isToggle: true,
             state: false,
-            run: handleAntiAfkScript
+            run: runAntiAfk
         }
     };
 
-    // --- UI Building Logic ---
+    // --- UI Layout & Controls ---
     const existingHub = document.getElementById('custom-script-hub');
     if (existingHub) existingHub.remove();
 
@@ -143,7 +149,7 @@
     hub.appendChild(body);
     document.body.appendChild(hub);
 
-    // --- Window Dragging Logic ---
+    // --- Dragging Engine ---
     let isDragging = false, offsetX, offsetY;
     header.addEventListener('mousedown', (e) => {
         isDragging = true;
@@ -158,7 +164,7 @@
     });
     document.addEventListener('mouseup', () => isDragging = false);
 
-    // --- Visibility Hotkey (Ctrl + E) ---
+    // --- Panel Hotkey Visibility (Ctrl+E) ---
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key.toLowerCase() === 'e') {
             e.preventDefault();
