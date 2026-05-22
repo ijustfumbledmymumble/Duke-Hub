@@ -27,7 +27,7 @@ window.addEventListener('keydown', (event) => {
         "Anti AFK": {
         isToggle: true,
         state: false,
-        run:  while (true) {{
+        run:  while (true) {
   document.querySelector('#yesBtn').click();
  }
         },
