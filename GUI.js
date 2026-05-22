@@ -16,8 +16,6 @@
   const buttons = container.querySelectorAll('button');
   
   buttons.forEach(button => button.click());
-}
-
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' || event.code === 'Enter') {
     event.preventDefault(); 
@@ -29,7 +27,7 @@ window.addEventListener('keydown', (event) => {
         "Anti AFK": {
         isToggle: true,
         state: false,
-        run:  while (true) {
+        run:  while (true) {{
   document.querySelector('#yesBtn').click();
  }
         },
