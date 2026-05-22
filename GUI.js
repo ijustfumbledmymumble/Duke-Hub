@@ -4,7 +4,7 @@
         "Enter Key Clicks Next/Done button": {
             isToggle: true,
             state: false,
-            run: function(state) {
+            run:
                function clickAllButtons() {
   const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
   
@@ -25,7 +25,14 @@ window.addEventListener('keydown', (event) => {
   }
 });
             }
-        }
+        },
+        "Anti AFK": {
+        isToggle: true,
+        state: false,
+        run:  while (true) {
+  document.querySelector('#yesBtn').click();
+ }
+        },
     };
 
     const existingHub = document.getElementById('custom-script-hub');
