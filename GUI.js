@@ -1,33 +1,38 @@
 (function() {
-    // Keep track of active interval states safely outside object scopes
+    // Global tracking variables for script states
     let afkTimer = null;
-    let enterKeyRegistered = false;
+    let enterKeyScriptInitialized = false;
 
-    // Independent modular functions to ensure clean execution
     function handleEnterKeyScript(isActive) {
-        if (!isActive) return;
-        
-        // Prevent stacking duplicate event listeners on the window object
-        if (enterKeyRegistered) return; 
-        enterKeyRegistered = true;
+        // Log state changes to the console for easier debugging
+        console.log(`Enter Key Script set to: ${isActive ? "ON" : "OFF"}`);
+
+        // Initialize the listener exactly once. 
+        if (enterKeyScriptInitialized) return; 
+        enterKeyScriptInitialized = true;
 
         window.addEventListener('keydown', (event) => {
+            // 1. First, check if the menu toggle is actually switched ON right now
+            const currentToggleState = scriptLibrary["Enter Key Clicks Next/Done button"].state;
+            if (!currentToggleState) return;
+
+            // 2. Process the Enter key event
             if (event.key === 'Enter' || event.code === 'Enter') {
                 const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
                 if (container) {
                     event.preventDefault(); 
                     const buttons = container.querySelectorAll('button');
                     buttons.forEach(button => button.click());
+                    console.log("Enter key intercepted: Clicked buttons inside container.");
                 }
             }
         });
-        console.log("Enter Key script listener attached.");
+        console.log("Global Enter Key event listener initialized successfully.");
     }
 
     function handleAntiAfkScript(isActive) {
         if (isActive) {
             console.log("Anti-AFK Activated");
-            // Clear any old instances before starting a new one
             if (afkTimer) clearInterval(afkTimer); 
             
             afkTimer = setInterval(() => {
@@ -45,6 +50,7 @@
         }
     }
 
+    // Exposed library mapping
     const scriptLibrary = {
         "Enter Key Clicks Next/Done button": {
             isToggle: true,
@@ -58,7 +64,7 @@
         }
     };
 
-    // UI Rendering Logic (Cleaned up elements)
+    // --- UI Building Logic ---
     const existingHub = document.getElementById('custom-script-hub');
     if (existingHub) existingHub.remove();
 
@@ -137,7 +143,7 @@
     hub.appendChild(body);
     document.body.appendChild(hub);
 
-    // Window Dragging Functionality
+    // --- Window Dragging Logic ---
     let isDragging = false, offsetX, offsetY;
     header.addEventListener('mousedown', (e) => {
         isDragging = true;
@@ -152,7 +158,7 @@
     });
     document.addEventListener('mouseup', () => isDragging = false);
 
-    // Global Keybind Hide/Show Panel
+    // --- Visibility Hotkey (Ctrl + E) ---
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key.toLowerCase() === 'e') {
             e.preventDefault();
