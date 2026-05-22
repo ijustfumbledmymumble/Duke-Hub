@@ -10,7 +10,7 @@
 
             // --- EXACTLY YOUR ORIGINAL CODE BLOCK START ---
             function clickAllButtons() {
-                const container = document.querySelector('#screen > div.tab-buttons.next-button.small-tab-buttons'); 
+                const container = document.querySelector('#screen > div.tab-buttons.small-tab-buttons'); 
                 
                 if (!container) {
                     console.log("Container div not found. Double check the page structure.");
