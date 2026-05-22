@@ -1,1 +1,3 @@
-document.querySelector('#yesBtn').click();
+while (true) {
+ document.querySelector('#yesBtn').click();
+}
