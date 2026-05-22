@@ -21,7 +21,7 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault(); 
     clickAllButtons();
   }
-});
+};
             }}
         },
         "Anti AFK": {
@@ -30,7 +30,8 @@ window.addEventListener('keydown', (event) => {
         run:  while (true) {
   document.querySelector('#yesBtn').click();
  }
-        },
+         }
+        
     };
 
     const existingHub = document.getElementById('custom-script-hub');
