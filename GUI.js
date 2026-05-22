@@ -1,22 +1,23 @@
 (function() {
+
     const githubLibrary = {
-        "blank": "https://githubusercontent.com",
+        "Auto Scroll Feature": {
+            isToggle: true,
+            state: false,
+            url: "https://githubusercontent.com"
+        }
     };
 
-    async function executeRemoteScript(url) {
+    async function executeRemoteScript(url, isToggle, state) {
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
             const scriptText = await response.text();
             
-            const runScript = new Function(scriptText);
-            runScript();
+            const runScript = new Function('state', scriptText);
+            runScript(state); 
             
-            console.log(`%c✔ Successfully executed script from GitHub`, "color: #00ff00;");
-        } catch (error) {
-            console.error("❌ Failed to load remote script:", error);
-            alert("Could not load script. Check console for details.");
         }
     }
 
@@ -47,18 +48,49 @@
     body.style.gap = '8px';
 
     Object.keys(githubLibrary).forEach(name => {
+        const item = githubLibrary[name];
         const btn = document.createElement('button');
         btn.innerText = name;
+        
         Object.assign(btn.style, {
             padding: '8px', backgroundColor: '#2a2a35', color: '#00ffcc',
             border: '1px solid #00ffcc', borderRadius: '4px', cursor: 'pointer',
             fontWeight: 'bold', transition: '0.2s'
         });
 
-        btn.onmouseover = () => { btn.style.backgroundColor = '#00ffcc'; btn.style.color = '#1e1e24'; };
-        btn.onmouseout = () => { btn.style.backgroundColor = '#2a2a35'; btn.style.color = '#00ffcc'; };
+        const updateVisuals = () => {
+            if (item.isToggle && item.state) {
+                btn.style.backgroundColor = '#00ff00';
+                btn.style.color = '#1e1e24';
+                btn.style.borderColor = '#00ff00';
+            } else {
+                btn.style.backgroundColor = '#2a2a35';
+                btn.style.color = '#00ffcc';
+                btn.style.borderColor = '#00ffcc';
+            }
+        };
+
+        btn.onmouseover = () => { 
+            if (!item.isToggle || !item.state) {
+                btn.style.backgroundColor = '#00ffcc'; btn.style.color = '#1e1e24'; 
+            }
+        };
+        btn.onmouseout = () => { 
+            if (!item.isToggle || !item.state) {
+                btn.style.backgroundColor = '#2a2a35'; btn.style.color = '#00ffcc'; 
+            }
+        };
         
-        btn.addEventListener('click', () => executeRemoteScript(githubLibrary[name]));
+        btn.addEventListener('click', async () => {
+            if (item.isToggle) {
+                item.state = !item.state; // Invert state
+                updateVisuals();
+                await executeRemoteScript(item.url, true, item.state);
+            } else {
+                await executeRemoteScript(item.url, false, null);
+            }
+        });
+
         body.appendChild(btn);
     });
 
@@ -86,5 +118,5 @@
         }
     });
 
-    console.log("Use ctrl+e to toggle the hub");
+    console.log("Hub opened use ctrl+e to toggle the window");
 })();
